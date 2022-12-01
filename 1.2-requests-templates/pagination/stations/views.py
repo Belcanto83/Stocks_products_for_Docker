@@ -9,7 +9,7 @@ def index(request):
     return redirect(reverse('bus_stations'))
 
 
-def bus_stations(request):
+def show_bus_stations(request):
     # получите текущую страницу и передайте ее в контекст
     # также передайте в контекст список станций на странице
 

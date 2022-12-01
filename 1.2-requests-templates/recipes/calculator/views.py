@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from django.shortcuts import render
 
+
 DATA = {
     'omlet': {
         'Название': 'Классический омлет',
