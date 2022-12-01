@@ -1,0 +1,16 @@
+{% extends "./books_list.html" %}
+{% load static %}
+
+{% block title %}Каталог книг по дате публикации{% endblock %}
+{% block pub_date_pagination %}
+    <div class="container">
+        <div class="">
+            {% if previous_page %}
+                <a class="" href="{% url 'pub_date' date={{ previous_page }}">{{ previous_page }}</a>
+            {% endif %}
+            {% if next_page %}
+                <a class="" href="{% url 'pub_date' date={{ next_page }}">{{ next_page }}</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
