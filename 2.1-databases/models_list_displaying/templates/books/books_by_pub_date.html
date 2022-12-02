@@ -18,14 +18,17 @@
             </div>
             {% endfor %}
         </div>
-        <div class="page">
-            {% if previous_page %}
-                <a href="{% url 'pub_date' date=previous_page %}">{{ previous_page }}</a>
-            {% endif %}
-                <span> | </span>
-            {% if next_page %}
-                <a href="{% url 'pub_date' date=next_page %}">{{ next_page }}</a>
-            {% endif %}
-        </div>
+
+<!--        <div class="page">-->
+<!--            {% if previous_page %}-->
+<!--                <a href="{% url 'pub_date' date=previous_page %}">{{ previous_page }}</a>-->
+<!--            {% endif %}-->
+<!--                <span> | </span>-->
+<!--            {% if next_page %}-->
+<!--                <a href="{% url 'pub_date' date=next_page %}">{{ next_page }}</a>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+
+        {% include "./includes/pagination.html" %}
     </div>
 {% endblock %}
