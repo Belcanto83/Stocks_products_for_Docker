@@ -31,3 +31,5 @@ class Command(BaseCommand):
                 print(f'Новые данные из файла {file} были успешно добавлены в базу!')
             except FileNotFoundError as err:
                 print(err)
+            except django.db.utils.OperationalError:
+                print('Ошибка подключения к базе данных.. :(')
