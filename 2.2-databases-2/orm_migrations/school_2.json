@@ -1,0 +1,11 @@
+[
+{
+  "model": "school.student",
+  "pk": 5,
+  "fields": {
+    "name": "Васечкин Петр Сергеевич",
+    "teacher": 3,
+    "group": "8Б"
+  }
+}
+]

@@ -1,9 +1,8 @@
-import uuid
 from django.db import models
 
 
 class Phone(models.Model):
-    id = models.PositiveSmallIntegerField(primary_key=True, editable=False)
+    id = models.PositiveSmallIntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=50)
     image = models.URLField(max_length=200)
     price = models.PositiveIntegerField()
