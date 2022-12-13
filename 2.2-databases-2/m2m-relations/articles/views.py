@@ -10,7 +10,7 @@ def articles_list(request):
     # ordering = ['-published_at', 'title']  # Сортировка по умолчанию прописана в Meta классе модели "Article"
 
     try:
-        article_list = Article.objects.all().prefetch_related('scopes__tag')
+        article_list = Article.objects.prefetch_related('scopes__tag')
         context = {'object_list': article_list}
         return render(request, template, context)
     except OperationalError:
