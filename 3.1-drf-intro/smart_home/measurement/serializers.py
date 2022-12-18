@@ -1,3 +1,35 @@
 from rest_framework import serializers
 
-# TODO: опишите необходимые сериализаторы
+from .models import Measurement, Sensor
+
+
+class MeasurementSerializer(serializers.ModelSerializer):
+    temperature = serializers.DecimalField(source='measurement', max_digits=5, decimal_places=2)
+    created_at = serializers.DateTimeField(source='measurement_time', read_only=True)
+
+    class Meta:
+        model = Measurement
+        fields = ['id', 'temperature', 'created_at', 'sensor']
+
+
+class MeasurementMinDetailSerializer(serializers.ModelSerializer):
+    temperature = serializers.DecimalField(source='measurement', max_digits=5, decimal_places=2)
+    created_at = serializers.DateTimeField(source='measurement_time', read_only=True)
+
+    class Meta:
+        model = Measurement
+        fields = ['temperature', 'created_at']
+
+
+class SensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sensor
+        fields = ['id', 'name', 'description']
+
+
+class SensorDetailSerializer(serializers.ModelSerializer):
+    measurements = MeasurementMinDetailSerializer(read_only=True, many=True, required=False)
+
+    class Meta:
+        model = Sensor
+        fields = ['id', 'name', 'description', 'measurements']
