@@ -1,5 +1,7 @@
 from django.db import models
 
+from .utils import upload_directory_path
+
 
 class Sensor(models.Model):
     # id = pk
@@ -21,6 +23,7 @@ class Measurement(models.Model):
     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE, related_name='measurements', verbose_name='Датчик')
     measurement = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Измерение')
     measurement_time = models.DateTimeField(auto_now=True, verbose_name='Время измерения')
+    snapshot = models.ImageField(upload_to=upload_directory_path, null=True, blank=True, verbose_name='Снимок')
 
     class Meta:
         verbose_name = 'Измерение'
