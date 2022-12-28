@@ -12,7 +12,7 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     # параметры фильтрации данных:
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id']
     search_fields = ['title', 'description']
     ordering_fields = ['title']
