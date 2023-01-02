@@ -3,6 +3,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.viewsets import ModelViewSet
 
+from logistic.Pagination import StockPagination
 from logistic.models import Product, Stock
 from logistic.filters import StockFilter
 from logistic.serializers import ProductSerializer, StockSerializer, StockListSerializer
@@ -29,7 +30,10 @@ class StockViewSet(ModelViewSet):
     filterset_class = StockFilter
     search_fields = ['products__title', 'products__description', 'address']
     # pagination
-    pagination_class = LimitOffsetPagination
+    pagination_class = StockPagination
+    # Данные параметры правильнее задавать в отдельном классе StockPagination (см. выше)
+    # page_size = 2
+    # pagination_class.page_size = page_size
 
     def get_serializer_class(self):
         if self.action == 'list':
