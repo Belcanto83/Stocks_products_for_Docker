@@ -53,7 +53,7 @@ class StockSerializer(serializers.ModelSerializer):
 
         # Получаем список нужных нам ИМЕЮЩИХСЯ записей (объектов) в связанной таблице StockProduct
         # для обновления соответствующих записей.
-        stock_products = list(instance.positions.filter(product_id__in=[elem.get('product') for elem in positions],
+        stock_products = list(instance.positions.filter(product_id__in=[elem.get('product').id for elem in positions],
                                                         stock=stock))
         # Обновляем ИМЕЮЩИЕСЯ записи в связанной таблице StockProduct
         stock_products_to_update = []
