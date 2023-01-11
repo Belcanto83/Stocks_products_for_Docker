@@ -1,0 +1,7 @@
+GET http://localhost:8000/omlet
+
+POST http://localhost:8000/omlet
+
+###
+
+GET http://localhost:8000/omlet
