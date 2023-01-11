@@ -47,16 +47,20 @@ class AdvertisementViewSet(ModelViewSet):
             return [IsAuthenticated(), IsOwnerOrReadOnly()]
         return []
 
-    @action(methods=['POST', 'PUT', 'PATCH'], detail=True)
-    def add_to_favorites(self, request, pk=None):
+    @action(methods=['POST', 'DELETE'], detail=True)
+    def change_favorites(self, request, pk=None):
         advertisement = self.get_object()
         user = request.user
         if user.is_authenticated:
-            if user == advertisement.creator:
-                return Response({"detail": "it's impossible to add to favorites your own advertisement"},
-                                status=status.HTTP_403_FORBIDDEN)
-            user.favorite_advertisements.add(advertisement)
-            return Response({"detail": "ok"})
+            if request.method == 'POST':
+                if user == advertisement.creator:
+                    return Response({"detail": "it's impossible to add to favorites your own advertisement"},
+                                    status=status.HTTP_403_FORBIDDEN)
+                user.favorite_advertisements.add(advertisement)
+                return Response({"detail": "ok"})
+            elif request.method == 'DELETE':
+                user.favorite_advertisements.remove(advertisement)
+                return Response({"detail": "ok"})
         return Response({"detail": "authentication credentials were not provided"}, status=status.HTTP_403_FORBIDDEN)
 
     @action(detail=False)
