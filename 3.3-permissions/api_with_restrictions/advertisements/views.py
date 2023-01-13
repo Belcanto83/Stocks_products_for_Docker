@@ -45,29 +45,62 @@ class AdvertisementViewSet(ModelViewSet):
         """Получение прав для действий."""
         if self.action in ["create", "update", "partial_update", "destroy"]:
             return [IsAuthenticated(), IsOwnerOrReadOnly()]
+        elif self.action in ["show_favorites", "change_favorites"]:
+            return [IsAuthenticated()]
         return []
+
+    # @action(methods=['POST', 'DELETE'], detail=True)
+    # def change_favorites(self, request, pk=None):
+    #     advertisement = self.get_object()
+    #     user = request.user
+    #     if user.is_authenticated:
+    #         if request.method == 'POST':
+    #             if user == advertisement.creator:
+    #                 return Response({"detail": "it's impossible to add to favorites your own advertisement"},
+    #                                 status=status.HTTP_403_FORBIDDEN)
+    #             user.favorite_advertisements.add(advertisement)
+    #             return Response({"detail": "ok"})
+    #         elif request.method == 'DELETE':
+    #             user.favorite_advertisements.remove(advertisement)
+    #             return Response({"detail": "ok"})
+    #     return Response({"detail": "authentication credentials were not provided"}, status=status.HTTP_403_FORBIDDEN)
 
     @action(methods=['POST', 'DELETE'], detail=True)
     def change_favorites(self, request, pk=None):
         advertisement = self.get_object()
         user = request.user
-        if user.is_authenticated:
-            if request.method == 'POST':
-                if user == advertisement.creator:
-                    return Response({"detail": "it's impossible to add to favorites your own advertisement"},
-                                    status=status.HTTP_403_FORBIDDEN)
-                user.favorite_advertisements.add(advertisement)
-                return Response({"detail": "ok"})
-            elif request.method == 'DELETE':
-                user.favorite_advertisements.remove(advertisement)
-                return Response({"detail": "ok"})
-        return Response({"detail": "authentication credentials were not provided"}, status=status.HTTP_403_FORBIDDEN)
+        if request.method == 'POST':
+            if user == advertisement.creator:
+                return Response({"detail": "it's impossible to add to favorites your own advertisement"},
+                                status=status.HTTP_403_FORBIDDEN)
+            user.favorite_advertisements.add(advertisement)
+            return Response({"detail": "ok"})
+        elif request.method == 'DELETE':
+            user.favorite_advertisements.remove(advertisement)
+            return Response({"detail": "ok"})
+
+    # @action(detail=False)
+    # def show_favorites(self, request):
+    #     user = request.user
+    #     if user.is_authenticated:
+    #         favorite_advertisements = user.favorite_advertisements
+    #         queryset = self.filter_queryset(favorite_advertisements)
+    #         page = self.paginate_queryset(queryset)
+    #         if page is not None:
+    #             serializer = self.get_serializer(page, many=True)
+    #             return self.get_paginated_response(serializer.data)
+    #         serializer = self.get_serializer(queryset, many=True)
+    #         return Response(serializer.data)
+    #     return Response({"detail": "authentication credentials were not provided"}, status=status.HTTP_403_FORBIDDEN)
 
     @action(detail=False)
     def show_favorites(self, request):
         user = request.user
-        if user.is_authenticated:
-            favorite_advertisements = user.favorite_advertisements
-            serializer = self.get_serializer(favorite_advertisements, many=True)
-            return Response(serializer.data)
-        return Response({"detail": "authentication credentials were not provided"}, status=status.HTTP_403_FORBIDDEN)
+        favorite_advertisements = user.favorite_advertisements.order_by('-updated_at')
+        queryset = self.filter_queryset(favorite_advertisements)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
