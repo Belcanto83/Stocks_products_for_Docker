@@ -44,6 +44,14 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         adv_count = Advertisement.objects.filter(creator=self.context['request'].user,
                                                  status=AdvertisementStatusChoices.OPEN).count()
         if adv_count >= MAX_OPEN_ADV:
-            raise ValidationError(f'Not allowed. Q-ty {adv_count} of open advs >= {MAX_OPEN_ADV}')
+            if self.context["request"].method == 'POST':
+                raise ValidationError(
+                    f'Not allowed. Q-ty {adv_count} of open advs >= {MAX_OPEN_ADV} (max. possible q-ty)'
+                )
+            elif self.context["request"].method in ['PUT', 'PATCH'] and \
+                    data['status'] == AdvertisementStatusChoices.OPEN:
+                raise ValidationError(
+                    f'Not allowed. Q-ty {adv_count} of open advs >= {MAX_OPEN_ADV} (max. possible q-ty)'
+                )
 
         return data

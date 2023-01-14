@@ -10,7 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 from advertisements.filters import AdvertisementFilter
 from advertisements.models import Advertisement, AdvertisementStatusChoices
 from advertisements.pagination import AdvertisementPagination
-from advertisements.permissions import IsOwnerOrReadOnly
+from advertisements.permissions import IsOwner
 from advertisements.serializers import AdvertisementSerializer
 
 
@@ -29,22 +29,24 @@ class AdvertisementViewSet(ModelViewSet):
     pagination_class = AdvertisementPagination
 
     def get_queryset(self):
+        ADV_STATUSES_TO_SHOW = [AdvertisementStatusChoices.OPEN]
+
         user = self.request.user
         if user.is_authenticated:
             if user.is_staff:
                 return Advertisement.objects.order_by('-updated_at')
             # combined_queryset = Advertisement.objects.exclude(status=AdvertisementStatusChoices.DRAFT) | \
             #                     Advertisement.objects.filter(creator=user)
-            combined_queryset = Advertisement.objects.filter(~Q(status=AdvertisementStatusChoices.DRAFT) |
+            combined_queryset = Advertisement.objects.filter(Q(status__in=ADV_STATUSES_TO_SHOW) |
                                                              Q(creator=user))
             # print(combined_queryset.query)
             return combined_queryset.order_by('-updated_at')
-        return Advertisement.objects.exclude(status=AdvertisementStatusChoices.DRAFT).order_by('-updated_at')
+        return Advertisement.objects.filter(status__in=ADV_STATUSES_TO_SHOW).order_by('-updated_at')
 
     def get_permissions(self):
         """Получение прав для действий."""
         if self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsAuthenticated(), IsOwnerOrReadOnly()]
+            return [IsAuthenticated(), IsOwner()]
         elif self.action in ["show_favorites", "change_favorites"]:
             return [IsAuthenticated()]
         return []
