@@ -32,7 +32,11 @@ class CourseSerializer(serializers.ModelSerializer):
         course = super().update(instance, validated_data)
         if students:
             student_objs = [Student(**data) for data in students]
-            course.students.set(student_objs)
+            # Удаляем сразу ВСЕХ старых студентов курса
+            Student.objects.filter(id__in=[student.id for student in course.students.all()]).delete()
+            # Создаем сразу ВСЕХ новых студентов курса
+            new_students = Student.objects.bulk_create(student_objs)
+            course.students.set(new_students, clear=True)
         return course
 
     @staticmethod
