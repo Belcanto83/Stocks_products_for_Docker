@@ -94,25 +94,31 @@ def test_filter_course_by_name(api_client, course_factory):
 @pytest.mark.django_db
 def test_create_course_success(api_client, settings):
     # Arrange
-    count = Course.objects.count()
+    courses_count = Course.objects.count()
+    students_count = Student.objects.count()
+    students = [
+            {'name': 'Inna'},
+            {'name': 'Ivan'},
+        ]
     settings.MAX_STUDENTS_PER_COURSE = 2
 
     # Action
     url = reverse('courses-list')
     response = api_client.post(url, data={
         'name': 'Python',
-        'students': [
-            {'name': 'Inna'},
-            {'name': 'Ivan'},
-        ]
+        'students': students
     }
                                )
 
     # Assert
     assert response.status_code == status.HTTP_201_CREATED
-    assert Course.objects.count() == count + 1
+    assert Course.objects.count() == courses_count + 1
     resp_json = response.json()
     assert resp_json['name'] == 'Python'
+    assert Student.objects.count() == students_count + 2
+    students_iter = iter(students)
+    for student in Student.objects.all():
+        assert student.name == next(students_iter)['name']
 
 
 @pytest.mark.django_db
