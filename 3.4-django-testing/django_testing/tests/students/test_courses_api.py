@@ -27,9 +27,10 @@ def student_factory():
 
 
 @pytest.mark.django_db
-def test_retrieve_course(api_client, course_factory):
+def test_retrieve_course(api_client, course_factory, student_factory):
     # Arrange
-    courses = course_factory(_quantity=1)
+    students = student_factory(_quantity=5)
+    courses = course_factory(_quantity=1, students=students)
     course = courses[0]
 
     # Action
@@ -40,6 +41,9 @@ def test_retrieve_course(api_client, course_factory):
     assert response.status_code == status.HTTP_200_OK
     resp_json = response.json()
     assert resp_json['name'] == course.name
+    assert course.students.count() == 5
+    for ind, student in enumerate(resp_json['students']):
+        assert student['name'] == students[ind].name
 
 
 @pytest.mark.django_db
