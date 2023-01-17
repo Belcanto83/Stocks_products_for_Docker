@@ -28,6 +28,12 @@ class CourseSerializer(serializers.ModelSerializer):
         return course
 
     def update(self, instance, validated_data):
+        """
+        В настоящий момент данный метод адаптирован под HTTP-запрос PUT.
+        PATCH запрос возможен, но под PATCH запрос данный метод не адаптирован,
+        т.к. ВСЕ старые студенты обновляемого курса удаляются
+        и сразу же создаются ВСЕ новые студенты курса, согласно параметрам запроса
+        """
         students = validated_data.pop('students', None)
         course = super().update(instance, validated_data)
         if students:
