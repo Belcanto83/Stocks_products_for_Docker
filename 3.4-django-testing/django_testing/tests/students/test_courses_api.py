@@ -30,8 +30,7 @@ def student_factory():
 def test_retrieve_course(api_client, course_factory, student_factory):
     # Arrange
     students = student_factory(_quantity=5)
-    courses = course_factory(_quantity=1, students=students)
-    course = courses[0]
+    course = course_factory(students=students)
 
     # Action
     url = reverse('courses-detail', args=[course.pk])
