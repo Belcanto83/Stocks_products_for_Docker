@@ -9,6 +9,7 @@ def index(request):
 
 def show_catalog(request, sort='name'):
     template = 'catalog.html'
+    allowed_sort_fields = ['name', 'price']
 
     phones = Phone.objects.all()
 
@@ -22,7 +23,11 @@ def show_catalog(request, sort='name'):
     else:
         sort_field = sort_param
 
-    sorted_phones = sorted(phones, key=lambda itm: itm.__getattribute__(sort_field), reverse=reverse)
+    if sort_field in allowed_sort_fields:
+        # Лучше сортировать queryset средствами СУБД: см. код в ветке feature/order_by
+        sorted_phones = sorted(phones, key=lambda itm: itm.__getattribute__(sort_field), reverse=reverse)
+    else:
+        sorted_phones = phones
 
     context = {'phones': sorted_phones}
     return render(request, template, context)
