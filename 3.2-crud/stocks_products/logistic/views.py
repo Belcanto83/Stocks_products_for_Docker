@@ -11,7 +11,7 @@ from logistic.serializers import ProductSerializer, StockSerializer, StockListSe
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by('title')
     serializer_class = ProductSerializer
     # параметры фильтрации данных:
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -23,7 +23,7 @@ class ProductViewSet(ModelViewSet):
 
 
 class StockViewSet(ModelViewSet):
-    queryset = Stock.objects.all()
+    queryset = Stock.objects.all().order_by('id')
     serializer_class = StockSerializer
     list_serializer_class = StockListSerializer
     # параметры фильтрации данных:
