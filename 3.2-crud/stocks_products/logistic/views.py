@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import LimitOffsetPagination
@@ -39,3 +40,7 @@ class StockViewSet(ModelViewSet):
         if self.action == 'list':
             return self.list_serializer_class
         return self.serializer_class
+
+
+def index(request):
+    return redirect('api/v1/')
