@@ -15,3 +15,4 @@
    docker run --env-file .env --link some-postgres:db --name myapp -p 8000:8000 --rm -it myapp_image
    ```
    Необходимые для работы Django-приложения переменные окружения хранятся в файле ".env". Связь с базой данных задается параметром "--link".
+5. Работающее Django-приложение доступно по адресу: http://localhost:8000/
