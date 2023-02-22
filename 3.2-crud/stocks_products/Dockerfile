@@ -1,12 +1,15 @@
-FROM python:3.10
+FROM python:3.10-alpine
 
-RUN mkdir -p /usr/src/app/
-WORKDIR /usr/src/app/
+ENV HOME=/usr/src/app
+
+RUN mkdir -p $HOME
+RUN mkdir -p $HOME/static
+WORKDIR $HOME
+
+RUN apk add --no-cache gcc musl-dev linux-headers
 
 COPY . .
 
 RUN pip --no-cache-dir install -r requirements.txt
 
-EXPOSE 8000
-
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+#CMD python manage.py migrate (docker-compose exec stocks_products python manage.py migrate)
