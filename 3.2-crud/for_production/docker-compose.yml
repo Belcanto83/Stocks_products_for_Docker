@@ -1,0 +1,48 @@
+version: '3.9'
+
+volumes:
+  postgresql_vol:
+  static_vol:
+
+services:
+  postgresql_db:
+    image: postgres:alpine
+    ports:
+      - "5555:5432"
+    restart: unless-stopped
+    volumes:
+      - postgresql_vol:/var/lib/postgresql/data
+      - ./postgresql/logs:/var/log
+    environment:
+      POSTGRES_DB: "new_db"
+      POSTGRES_USER: "admin1"
+      POSTGRES_PASSWORD: "password"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin1 -d new_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+  stocks_products:
+    image: belcanto/32-crud-stocks_products:v1.0
+    command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - static_vol:/usr/src/app/static
+    expose:
+      - 8000
+#    ports:
+#      - "8000:8000"
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    depends_on:
+      - postgresql_db
+  nginx:
+    image: belcanto/32-crud-nginx:v1.0
+    volumes:
+      - static_vol:/usr/src/app/static
+    ports:
+      - "8080:80"
+    depends_on:
+      - stocks_products
+    restart: unless-stopped
