@@ -13,10 +13,8 @@ services:
     volumes:
       - postgresql_vol:/var/lib/postgresql/data
       - ./postgresql/logs:/var/log
-    environment:
-      POSTGRES_DB: "new_db"
-      POSTGRES_USER: "admin1"
-      POSTGRES_PASSWORD: "password"
+    env_file:
+      - ./.env_db
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin1 -d new_db"]
       interval: 30s
@@ -30,8 +28,6 @@ services:
       - static_vol:/usr/src/app/static
     expose:
       - 8000
-#    ports:
-#      - "8000:8000"
     env_file:
       - ./.env
     restart: unless-stopped
